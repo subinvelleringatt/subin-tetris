@@ -3,42 +3,56 @@ name: Build Android APK
 on:
   push:
     branches:
-      - master  # Ensures this runs on pushes to the master branch
+      - master
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Uses the latest Ubuntu environment
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-      # This action checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
 
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
         python-version: '3.9'
-      # This step specifically sets up Python 3.9 to avoid issues with distutils.
 
     - name: Install system dependencies
       run: |
         sudo apt-get update -qq
-        sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libjpeg8-dev
-      # Installs necessary Ubuntu packages for building the app.
+        sudo apt-get install -y unzip wget build-essential libssl-dev libffi-dev python3-dev autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libjpeg8-dev
+
+    - name: Install Android SDK Command Line Tools
+      run: |
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip -O cmdline-tools.zip
+        unzip cmdline-tools.zip -d ${{ runner.temp }}/android-sdk
+        echo "${{ runner.temp }}/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+
+    - name: Set up environment variables
+      run: |
+        echo "ANDROID_HOME=${{ runner.temp }}/android-sdk" >> $GITHUB_ENV
+
+    - name: Accept Android SDK licenses
+      run: |
+        mkdir -p $ANDROID_HOME/licenses
+        echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+
+    - name: Install Android Build Tools
+      run: |
+        yes | sdkmanager "build-tools;35.0.0"
 
     - name: Install Python dependencies
       run: |
         pip install cython==0.29.19
         pip install buildozer
-      # Installs required Python packages, including Buildozer and Cython.
 
     - name: Build APK
       run: |
         buildozer -v android debug
-      # Executes Buildozer to compile the APK with verbose output to help diagnose issues.
 
     - name: Upload APK
       uses: actions/upload-artifact@v2
       with:
         name: app
         path: bin/*.apk
-      # Uploads the generated APK as an artifact, which can be downloaded from the GitHub Actions workflow run page.
