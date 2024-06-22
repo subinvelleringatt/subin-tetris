@@ -9,6 +9,12 @@ package.name = tetris
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.example
 
+# (str) Source directory where your main.py and other python sources are located
+source.dir = "."
+
+# (str) Application version
+version = "1.0.0"
+
 # (str) Source files included in the package
 source.include_exts = py,png,jpg,kv,atlas
 
