@@ -1,0 +1,43 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main  # Ensures the action runs on commits to the main branch
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Specifies that the job should run on the latest Ubuntu runner.
+
+    steps:
+    - uses: actions/checkout@v2
+      # This step checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it.
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+      # This step sets up Python 3.9 for use in actions by downloading, caching, and configuring the environment.
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libjpeg8-dev
+        pip install cython==0.29.19
+        pip install buildozer
+      # This step installs required packages and libraries that Buildozer needs to compile the APK.
+
+    - name: Build APK
+      run: |
+        buildozer -v android debug
+      # This step executes Buildozer to compile the APK. The `-v` flag enables verbose output to help diagnose issues.
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: bin/*.apk
+      # This step uploads the generated APK as an artifact, which can be downloaded from the GitHub Actions workflow run page.
