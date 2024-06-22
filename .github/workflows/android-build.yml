@@ -23,7 +23,7 @@ jobs:
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline-tools.zip
         unzip cmdline-tools.zip
         mkdir -p ${ANDROID_HOME}/cmdline-tools/latest
-        mv cmdline-tools/* ${ANDROID_HOME}/cmdline-tools/latest/
+        cp -r cmdline-tools/* ${ANDROID_HOME}/cmdline-tools/latest/
         export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "build-tools;33.0.0" "platforms;android-33"
