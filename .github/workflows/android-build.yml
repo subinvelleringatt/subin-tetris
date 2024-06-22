@@ -28,9 +28,9 @@ jobs:
         yes | sdkmanager --licenses
         sdkmanager "platform-tools" "build-tools;33.0.0" "platforms;android-33"
         export PATH=$PATH:$ANDROID_HOME/build-tools/33.0.0
-        echo $PATH
+        echo "PATH: $PATH"
         which aidl
-        aidl --version
+        aidl --help | head -n 1 || true
     - name: Install Python dependencies
       run: |
         pip install --upgrade pip
