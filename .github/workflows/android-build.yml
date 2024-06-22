@@ -19,7 +19,7 @@ jobs:
     - name: Install and set up Android SDK
       run: |
         sudo apt-get install -y android-sdk
-        echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
+        yes | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --licenses
         sudo ${ANDROID_HOME}/tools/bin/sdkmanager "platform-tools" "build-tools;33.0.0" "platforms;android-33"
         export PATH=$PATH:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/33.0.0
         echo "PATH: $PATH"
